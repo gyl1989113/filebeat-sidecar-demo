@@ -1,0 +1,26 @@
+apiVersion: v1
+data:
+  filebeat.yml: |-
+    filebeat.inputs:
+    - type: log
+      paths:
+        - /var/log/nginx/*.log
+      tail_files: true
+      fields:
+        node_name: '${NODE_NAME}'
+        pod_name: '${POD_NAME}'
+        pod_namespace: '${POD_NAMESPACE}'
+    setup.ilm.enabled: false
+    setup.template.name: "nginx"
+    setup.template.pattern: "nginx-*"
+    output.elasticsearch:
+      hosts: ['${ELASTICSEARCH_HOST:elasticsearch}:${ELASTICSEARCH_PORT:9200}']
+      username: ${ELASTICSEARCH_USERNAME}
+      password: ${ELASTICSEARCH_PASSWORD}
+      index: "nginx-%{+yyyy.MM.dd}"
+kind: ConfigMap
+metadata:
+  labels:
+    app: filebeat
+  name: filebeat-config
+  namespace: elastic
