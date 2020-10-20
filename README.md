@@ -1,0 +1,1 @@
+# filebeat-sidecar-demo
